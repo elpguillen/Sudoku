@@ -30,3 +30,50 @@ table {
 .content {
     background-color: white;
 }
+
+table input {
+    height: 50px;
+    width: 50px;
+}
+
+td {
+    padding: 0px;
+}
+
+table {
+    width: 460px;
+    height: 460px;
+}
+
+table, th, td {
+    border: 0px solid grey;
+    border-collapse: collapse;
+}
+
+td:nth-child(3n) {
+    border-right: 3px solid;
+}
+
+td:first-child {
+    border-left: 3px solid;
+}
+
+tr:nth-child(3n) {
+    border-bottom: 3px solid;
+}
+
+tr:first-child {
+    border-top: 3px solid;
+}
+
+.timer {
+    position: relative;
+    left: 150px;
+}
+
+.sudoku-difficulty {
+    position: relative;
+    right: 150px;
+    background-color: white;
+}
+
