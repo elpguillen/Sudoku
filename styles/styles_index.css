@@ -1,11 +1,15 @@
 html, body {
     margin: 0px;
-    background-color: lightgray;
+    background-color: #ccc;
 }
 
 header {
     text-align: center;
     margin: 20px;
+}
+
+footer {
+    text-align: center;
 }
 
 hr {
@@ -28,12 +32,12 @@ table {
 }
 
 .content {
-    background-color: white;
 }
 
 table input {
     height: 50px;
     width: 50px;
+    text-align: center;
 }
 
 td {
@@ -73,7 +77,21 @@ tr:first-child {
 
 .sudoku-difficulty {
     position: relative;
-    right: 150px;
+    right: 165px;
     background-color: white;
 }
 
+.table-footer {
+    margin: 20px;
+}
+
+.table-options {
+    margin: 25px;
+}
+
+.table-inputs button {
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    font-size: 24px;
+}
