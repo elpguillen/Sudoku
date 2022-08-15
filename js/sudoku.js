@@ -106,7 +106,6 @@ function addPuzzleValues() {
     puzzle_values = puzzle_values.map(elem => elem.trim());
 
     let number_items = puzzle_values.length
-
     // add values from puzzle
     for (col = 0; col < number_items; col++) {
         let cell = document.getElementById("cell[" + col + "]");
@@ -123,6 +122,8 @@ function addPuzzleValues() {
             cell_input.setAttribute("readonly", true);
             ++num_filled_cells;
             has_cell_value[col] = 1;
+        } else {
+            cell_input.value = "";
         }
     }
 }
