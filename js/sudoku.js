@@ -1,3 +1,70 @@
+const sudoku_puzzles_easy = [
+    `
+    6, 9, 0,   0, 0, 0,   0, 8, 7,   
+    0, 0, 0,   0, 0, 4,   0, 9, 0,   
+    5, 0, 3,   0, 7, 0,   0, 0, 1,   
+    
+    2, 8, 5,   9, 6, 0,   1, 7, 0,  
+    9, 1, 0,   7, 4, 5,   3, 2, 0,   
+    0, 0, 0,   0, 0, 8,   6, 5, 0,   
+    
+    8, 0, 9,   4, 0, 1,   0, 0, 0,   
+    0, 3, 0,   0, 0, 0,   0, 0, 5,   
+    0, 0, 0,   3, 9, 0,   0, 1, 0 
+    `
+];
+
+const sudoku_puzzles_medium = [
+    `
+    0, 0, 0,   5, 0, 9,   0, 1, 0,   
+    6, 1, 0,   0, 0, 0,   0, 9, 7,   
+    9, 0, 2,   1, 6, 0,   0, 0, 0,
+
+    0, 0, 0,   0, 8, 0,   0, 0, 0,   
+    0, 0, 0,   0, 5, 0,   3, 0, 8,   
+    8, 5, 3,   7, 1, 6,   0, 0, 0,
+
+    0, 4, 8,   0, 9, 1,   0, 3, 0,   
+    2, 0, 0,   0, 0, 0,   0, 8, 0,   
+    1, 0, 7,   8, 0, 0,   0, 0, 5 
+    `
+];
+
+const sudoku_puzzles_hard = [
+    `
+    5, 0, 0,   4, 0, 0,   0, 9, 0,   
+    0, 4, 0,   9, 1, 0,   8, 6, 7,   
+    0, 0, 0,   6, 0, 0,   0, 0, 4,
+
+    0, 1, 9,   0, 0, 0,   0, 5, 0,   
+    0, 0, 0,   5, 0, 8,   6, 0, 0,   
+    6, 0, 5,   0, 0, 2,   0, 0, 0,
+
+    0, 2, 0,   0, 0, 0,   4, 0, 5,   
+    0, 0, 0,   0, 0, 0,   0, 7, 0,   
+    0, 0, 3,   2, 5, 6,   0, 0, 0
+    `
+];
+
+let has_cell_value = [
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0
+];
+
+let num_filled_cells = 0;
+const sudokuContainer = document.getElementsByClassName("sudoku-table")[0];
+// Start making grid for the Sudoku
+makeSudokuTable(sudokuContainer);
+
+addPuzzleValues();
+
 /*
  *  Creates a 9x9 Sudoku grid
  */
@@ -34,7 +101,28 @@ function makeSudokuTable(element) {
     }
 }
 
-const sudokuContainer = document.getElementsByClassName("sudoku-table")[0];
+function addPuzzleValues() {
+    let puzzle_values = sudoku_puzzles_easy[0].split(", ");
+    puzzle_values = puzzle_values.map(elem => elem.trim());
 
-// Start making grid for the Sudoku
-makeSudokuTable(sudokuContainer);
+    let number_items = puzzle_values.length
+
+    // add values from puzzle
+    for (col = 0; col < number_items; col++) {
+        let cell = document.getElementById("cell[" + col + "]");
+        let cell_input = cell.firstChild;
+        let cell_input_value = puzzle_values[col];
+
+        // make sure there is a cell to add the value to
+        if (cell_input == null) {
+            return;
+        }
+
+        if (cell_input_value != 0) {
+            cell_input.value = cell_input_value;
+            cell_input.setAttribute("readonly", true);
+            ++num_filled_cells;
+            has_cell_value[col] = 1;
+        }
+    }
+}
