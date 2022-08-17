@@ -46,6 +46,22 @@ const sudoku_puzzles_hard = [
     `
 ];
 
+const sudoku_puzzle_error = [
+    `
+    5, 0, 0,   4, 0, 0,   0, 9, 0,   
+    0, 4, 0,   9, 1, 0,   8, 6, 7,   
+    0, 0, 0,   6, 0, 0,   0, 0, 4,
+
+    0, 1, 9,   0, 0, 0,   0, 5, 0,   
+    0, 0, 0,   5, 0, 8,   6, 0, 0,   
+    6, 0, 5,   0, 0, 2,   0, 0, 0,
+
+    0, 2, 0,   0, 0, 0,   4, 0, 5,   
+    0, 0, 0,   0, 0, 0,   0, 7, 0,   
+    0, 0, 3,   2, 5, 6,   0, 0, 0
+    `
+];
+
 let has_cell_value = [
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -64,9 +80,14 @@ const sudokuContainer = document.getElementsByClassName("sudoku-table")[0];
 makeSudokuTable(sudokuContainer);
 
 addPuzzleValues();
+//console.log(passRowConstraint(9, 7, 4));
+//console.log(passGridConstraint(9, 9, 6, 5, 5));
+console.log(passSudokuConstraints(9, 9, 7, 7, 7));
 
-/*
- *  Creates a 9x9 Sudoku grid
+
+/**
+ * Creates a 9x9 Sudoku grid
+ * @param {element} element HTML element that will hold the Sudoku grid
  */
 function makeSudokuTable(element) {
     // create table
@@ -101,6 +122,9 @@ function makeSudokuTable(element) {
     }
 }
 
+/**
+ * Adds the initial values for the Sudoku Grid
+ */
 function addPuzzleValues() {
     let puzzle_values = sudoku_puzzles_easy[0].split(", ");
     puzzle_values = puzzle_values.map(elem => elem.trim());
@@ -126,4 +150,153 @@ function addPuzzleValues() {
             cell_input.value = "";
         }
     }
+}
+
+/**
+ * Checks that the value inserted in the row is unique.
+ * @param   {Number} numberCols     Total number of columns
+ * @param   {Number} currentRow     The row that value was inserted
+ * @param   {Number} numberInserted Value that was inserted
+ * @returns {Boolean}               True if value unique, False otherwise
+ */
+function passRowConstraint(numberCols, currentRow, numberInserted) {
+
+    if ( (typeCheck(numberCols) !== 'number') ||
+            (typeCheck(currentRow) !== 'number') ||
+            (typeCheck(numberInserted) !== 'number')) {
+                return false;
+    }
+
+    if (numberCols < 1 || currentRow < 1 ||
+        numberInserted < 1 || numberInserted > 9) {
+            return false;
+    }
+
+    let firstCellIndex = (currentRow - 1) * 9;
+    let lastIndex = firstCellIndex + numberCols;
+
+    for (cellIndex = firstCellIndex; cellIndex < lastIndex; cellIndex++) {
+        let cell = document.getElementById("cell[" + cellIndex + "]").firstChild;
+        if (parseInt(cell.value, 10) === numberInserted) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Checks that the value inserted in the column is unique.
+ * @param   {Number} numberRows     Total number of rows
+ * @param   {Number} currentCol     The column that value was inserted
+ * @param   {Number} numberInserted Value that was inserted
+ * @returns {Boolean}               True if value unique, False otherwise
+ */
+function passColConstraint(numberRows, currentCol, numberInserted) {
+    
+    if ( (typeCheck(numberRows) !== 'number') ||
+            (typeCheck(currentCol) !== 'number') ||
+            (typeCheck(numberInserted) !== 'number')) {
+                return false;
+    }
+
+    if (numberRows < 1 || currentCol < 1 ||
+        numberInserted < 1 || numberInserted > 9) {
+            return false;
+    }
+
+    let firstCellIndex = (currentCol - 1);
+    let lastIndex = (numberRows * 8) + firstCellIndex + 1;
+
+    for (cellIndex = firstCellIndex; cellIndex < lastIndex;) {
+        let cell = document.getElementById("cell[" + cellIndex + "]").firstChild;
+        if (parseInt(cell.value, 10) === numberInserted) {
+            return false;
+        }
+        cellIndex = cellIndex + 9;
+    }
+
+    return true;
+}
+
+/**
+ * Checks that the value inserted in Sudoku sub-grid is unique.
+ * @param   {Number} numberRows     Total number of rows
+ * @param   {Number} numberCols     Total number of columns
+ * @param   {Number} currentRow     The row that value was inserted
+ * @param   {Number} currentCol     The column that value was inserted
+ * @param   {Number} numberInserted Value that was inserted
+ * @returns {Boolean}               True if value unique, False otherwise
+ */
+function passGridConstraint(numberRows, numberCols, currentRow, currentCol, numberInserted) {
+    if ( (typeCheck(numberRows) !== 'number') || (typeCheck(numberCols) !== 'number') ||
+            (typeCheck(currentRow) !== 'number') || (typeCheck(currentCol) !== 'number') ||
+            (typeCheck(numberInserted) !== 'number') ) {
+                return false;
+    }
+
+    if (numberRows !== 9 || numberCols !== 9 || 
+            currentRow < 1 || currentRow > 9 ||
+            currentCol < 1 || currentCol > 9 ||
+            numberInserted < 1 || numberInserted > 9) {
+        return false;
+    }
+
+    let gridLength = Math.sqrt(numberRows);
+    let rowStart = --currentRow - (currentRow % gridLength);
+    let rowEnd = rowStart + gridLength;
+    let colStart = --currentCol - (currentCol % gridLength);
+    let colEnd = colStart + gridLength;
+
+    for (row = rowStart; row < rowEnd; row++) {
+        for (col = colStart; col < colEnd; col++) {
+            let cellIndex = (row * 9) + col;
+            let cell = document.getElementById("cell[" + cellIndex + "]").firstChild;
+
+            if (parseInt(cell.value, 10) === numberInserted) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Checks that the value inserted follows the row, column, and sub-grid
+ * constraints of a valid Sudoku puzzle
+ * @param {number} numberRows  Total number of rows 
+ * @param {number} numberCols  Total number of columns
+ * @param {number} rowIndex    Row value was inserted
+ * @param {number} colIndex    Column value was inserted
+ * @param {number} cellValue   Value that was inserted
+ * @returns                    True if value unique, False otherwise
+ */
+function passSudokuConstraints(numberRows, numberCols, rowIndex, colIndex, cellValue) {
+    if ( (typeCheck(numberRows) !== 'number') || (typeCheck(numberCols) !== 'number') ||
+            (typeCheck(rowIndex) !== 'number') || (typeCheck(colIndex) !== 'number') ||
+            (typeCheck(cellValue) !== 'number') ) {
+                return false; 
+    }
+
+    if (numberRows !== 9 || numberCols !== 9 || 
+        rowIndex < 1 || rowIndex > 9 ||
+        colIndex < 1 || colIndex > 9 ||
+        cellValue < 1 || cellValue > 9) {
+            return false;
+    }
+
+    return passRowConstraint(numberCols, rowIndex, cellValue) &&
+            passColConstraint(numberRows, colIndex, cellValue) &&
+            passGridConstraint(numberRows, numberCols, rowIndex, colIndex, cellValue);
+}
+
+// https://www.freecodecamp.org/news/javascript-typeof-how-to-check-the-type-of-a-variable-or-object-in-js/
+function typeCheck(value) {
+    const return_value = Object.prototype.toString.call(value);
+    const type = return_value.substring(
+        return_value.indexOf(" ") + 1,
+        return_value.indexOf("]"));
+
+    return type.toLowerCase();
 }
