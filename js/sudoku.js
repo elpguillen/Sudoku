@@ -77,7 +77,7 @@ addPuzzleValues();
 addCellInputEventListeners();
 
 /*-------------------------------- functions --------------------------------*/
-   
+
 /**
  * Creates a 9x9 Sudoku grid
  * @param {element} element HTML element that will hold the Sudoku grid
@@ -310,6 +310,9 @@ function passSudokuConstraints(numberRows, numberCols, rowIndex, colIndex, cellV
             passGridConstraint(numberRows, numberCols, rowIndex, colIndex, cellValue);
 }
 
+/**
+ * Add Event Listener for each Sudoku cell.
+ */
 function addCellInputEventListeners() {
     // get all cell input elements
     const inputTags = document.querySelectorAll('input');
@@ -321,21 +324,17 @@ function addCellInputEventListeners() {
 
             let cell = document.getElementById("cell[" + i + "]").firstChild;
             let cellValue = parseInt(cell.value);
-            //console.log("value inserted: " + cellValue);
             let row = Math.floor(i / 9) + 1;
             let column = (i % 9) + 1;
-            //console.log(passSudokuConstraints(9, 9, row, column, cellValue));
 
             let status = document.getElementsByClassName('sudoku-status')[0];
 
             if (has_cell_value[i] === 0) {
                 has_cell_value[i] = 1;
                 ++num_filled_cells;
-                //console.log("Value added");
             } else {
                 has_cell_value[i] = 0;
                 --num_filled_cells;
-                //console.log("Value deleted")
             }
 
             if (!passSudokuConstraints(9, 9, row, column, cellValue)) {
@@ -363,6 +362,15 @@ function addCellInputEventListeners() {
     }
 }
 
+/**
+ * Updates cells whenever there is a change from a bad to good state and good 
+ * to bad state. Keeps track of bad inputs. Bad inputs have there background color
+ * changed to red and good inputs changed to white.
+ *  
+ * @param {Number} cellPosition Position of cell to update
+ * @param {Number} statusGood   True if valid input, otherwise False
+ * @returns 
+ */
 function updateInputCell(cellPosition, statusGood) {
     if ( (typeCheck(cellPosition) !== 'number') || (typeCheck(statusGood) !== 'boolean') ) {
         return;
@@ -381,7 +389,7 @@ function updateInputCell(cellPosition, statusGood) {
         ++numBadInputs;
         cell.style.backgroundColor = '#ff2400';
     }
-    console.log(numBadInputs);
+    //console.log(numBadInputs);
 }
 
 /*function rowColToIndex(rowIndex, colIndex) {
